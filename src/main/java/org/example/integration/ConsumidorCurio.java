@@ -1,6 +1,5 @@
 package org.example.integration;
 
-import java.util.ArrayList;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.example.integration.dto.requisicao.DadosRequisicaoObterCidadeCliente;
 import org.example.integration.dto.requisicao.DadosRequisicaoObterDadosCliente;
