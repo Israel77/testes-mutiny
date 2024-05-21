@@ -19,6 +19,6 @@ public class DadosClienteAssincrono {
     @POST
     public Uni<RespostaAgregadorDadosCliente> obterDadosCliente(
             RequisicaoAgregadorDadosCliente requisicao) {
-        return dadosClienteService.obterDadosCliente(requisicao);
+        return dadosClienteService.tratarRequisicao(requisicao);
     }
 }
