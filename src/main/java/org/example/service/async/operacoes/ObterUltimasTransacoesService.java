@@ -5,8 +5,8 @@ import java.time.Duration;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.example.integration.ConsumidorCurio;
 import org.example.integration.CurioConsumoException;
-import org.example.integration.dto.requisicao.DadosRequisicaoObterDadosCliente;
-import org.example.integration.dto.resposta.DadosRespostaObterDadosCliente;
+import org.example.integration.dto.requisicao.DadosRequisicaoObterUltimasTransacoes;
+import org.example.integration.dto.resposta.DadosRespostaObterUltimasTransacoes;
 import org.example.rest.dto.RequisicaoAgregadorDadosCliente;
 import org.example.rest.dto.RespostaAgregadorDadosCliente;
 
@@ -15,26 +15,25 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
-import static org.example.util.Utilidades.obterGeneroPorCodigo;
-
 @RequestScoped
-public class ObterDadosClienteService {
+public class ObterUltimasTransacoesService {
 
     @Inject
     @RestClient
     ConsumidorCurio consumidorCurio;
 
-    public Uni<DadosRespostaObterDadosCliente> tratarRequisicao(RequisicaoAgregadorDadosCliente requisicao) {
+    public Uni<DadosRespostaObterUltimasTransacoes> tratarRequisicao(
+            RequisicaoAgregadorDadosCliente requisicao) {
 
-        var requisicaoDadosCliente = new DadosRequisicaoObterDadosCliente();
-        requisicaoDadosCliente.setCodigoCliente(requisicao.codigoCliente());
+        var requisicaoObterUltimasTransacoes = new DadosRequisicaoObterUltimasTransacoes();
+        requisicaoObterUltimasTransacoes.setCodigoCliente(requisicao.codigoCliente());
 
         return consumidorCurio
-                .obterDadosCliente(requisicaoDadosCliente)
+                .obterUltimasTransacoesCliente(requisicaoObterUltimasTransacoes)
                 // Tratar timeout
                 .ifNoItem().after(Duration.ofSeconds(5))
                 .recoverWithItem(() -> {
-                    Log.error("Timeout na operação: op123451");
+                    Log.error("Timeout na operação: op123452");
                     return null;
                 })
                 // Tratar exceção lançada pelo Curio
@@ -46,14 +45,10 @@ public class ObterDadosClienteService {
     }
 
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
-            DadosRespostaObterDadosCliente dadosCliente) {
-
-        if (dadosCliente == null)
+            DadosRespostaObterUltimasTransacoes dadosUltimasTransacoes) {
+        if (dadosUltimasTransacoes == null)
             return;
 
-        resposta.setTextoNomeCliente(dadosCliente.getTextoNomeCliente());
-        resposta.setDataNascimentoCliente(dadosCliente.getDataNascimentoCliente());
-        resposta.setTextoGeneroCliente(
-                obterGeneroPorCodigo(dadosCliente.getCodigoGeneroCliente()));
+        resposta.setListaTransacoes(dadosUltimasTransacoes.getListaTransacoes());
     }
 }

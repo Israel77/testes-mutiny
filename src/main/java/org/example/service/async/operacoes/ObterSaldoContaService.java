@@ -5,8 +5,8 @@ import java.time.Duration;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.example.integration.ConsumidorCurio;
 import org.example.integration.CurioConsumoException;
-import org.example.integration.dto.requisicao.DadosRequisicaoObterDadosCliente;
-import org.example.integration.dto.resposta.DadosRespostaObterDadosCliente;
+import org.example.integration.dto.requisicao.DadosRequisicaoObterSaldoContaCorrente;
+import org.example.integration.dto.resposta.DadosRespostaObterSaldoContaCorrente;
 import org.example.rest.dto.RequisicaoAgregadorDadosCliente;
 import org.example.rest.dto.RespostaAgregadorDadosCliente;
 
@@ -15,26 +15,24 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
-import static org.example.util.Utilidades.obterGeneroPorCodigo;
-
 @RequestScoped
-public class ObterDadosClienteService {
+public class ObterSaldoContaService {
 
     @Inject
     @RestClient
     ConsumidorCurio consumidorCurio;
 
-    public Uni<DadosRespostaObterDadosCliente> tratarRequisicao(RequisicaoAgregadorDadosCliente requisicao) {
-
-        var requisicaoDadosCliente = new DadosRequisicaoObterDadosCliente();
-        requisicaoDadosCliente.setCodigoCliente(requisicao.codigoCliente());
+    public Uni<DadosRespostaObterSaldoContaCorrente> tratarRequisicao(
+            RequisicaoAgregadorDadosCliente requisicao) {
+        var requisicaoObterSaldoConta = new DadosRequisicaoObterSaldoContaCorrente();
+        requisicaoObterSaldoConta.setCodigoCliente(requisicao.codigoCliente());
 
         return consumidorCurio
-                .obterDadosCliente(requisicaoDadosCliente)
+                .obterSaldoContaCorrenteCliente(requisicaoObterSaldoConta)
                 // Tratar timeout
                 .ifNoItem().after(Duration.ofSeconds(5))
                 .recoverWithItem(() -> {
-                    Log.error("Timeout na operação: op123451");
+                    Log.error("Timeout na operação: op123452");
                     return null;
                 })
                 // Tratar exceção lançada pelo Curio
@@ -46,14 +44,10 @@ public class ObterDadosClienteService {
     }
 
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
-            DadosRespostaObterDadosCliente dadosCliente) {
-
-        if (dadosCliente == null)
+            DadosRespostaObterSaldoContaCorrente dadosSaldoConta) {
+        if (dadosSaldoConta == null)
             return;
 
-        resposta.setTextoNomeCliente(dadosCliente.getTextoNomeCliente());
-        resposta.setDataNascimentoCliente(dadosCliente.getDataNascimentoCliente());
-        resposta.setTextoGeneroCliente(
-                obterGeneroPorCodigo(dadosCliente.getCodigoGeneroCliente()));
+        resposta.setSaldoAtualContaCorrente(dadosSaldoConta.getSaldoAtualContaCorrente());
     }
 }
