@@ -33,12 +33,29 @@ public class DadosClienteAssincronoService {
 
         return consumidorCurio
                 .obterDadosCliente(requisicaoDadosCliente)
+                // Tratar timeout
+                .ifNoItem()
+                .after(Duration.ofSeconds(5))
+                .recoverWithItem(() -> {
+                    Log.error("Timeout na operação: op123450");
+                    return null;
+                })
+                // Tratar exceção lançada pelo Curio
+                .onFailure(CurioConsumoException.class)
+                .recoverWithItem(e -> {
+                    Log.error("Erro ao obter dados do cliente: " + requisicao.codigoCliente());
+                    return null;
+                })
+                // Transformar unis
                 .map(dadosCliente -> {
                     var resposta = new RespostaAgregadorDadosCliente();
 
-                    resposta.setTextoNomeCliente(dadosCliente.getTextoNomeCliente());
-                    resposta.setDataNascimentoCliente(dadosCliente.getDataNascimentoCliente());
-                    resposta.setTextoGeneroCliente(obterGeneroPorCodigo(dadosCliente.getCodigoGeneroCliente()));
+                    if (dadosCliente != null) {
+                        resposta.setTextoNomeCliente(dadosCliente.getTextoNomeCliente());
+                        resposta.setDataNascimentoCliente(dadosCliente.getDataNascimentoCliente());
+                        resposta.setTextoGeneroCliente(obterGeneroPorCodigo(dadosCliente.getCodigoGeneroCliente()));
+
+                    }
 
                     return resposta;
                 });
