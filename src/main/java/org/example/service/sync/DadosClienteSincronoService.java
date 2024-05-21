@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.sync;
 
 import java.time.Duration;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -18,7 +18,7 @@ import jakarta.inject.Inject;
 import static org.example.util.Utilidades.obterGeneroPorCodigo;
 
 @RequestScoped
-public class DadosClienteSincronoService implements ProvedorRespostaDadosCliente {
+public class DadosClienteSincronoService {
 
     @Inject
     @RestClient
@@ -28,7 +28,6 @@ public class DadosClienteSincronoService implements ProvedorRespostaDadosCliente
     RespostaAgregadorDadosCliente resposta;
 
 
-    @Override
     public RespostaAgregadorDadosCliente obterDadosCliente(
             RequisicaoAgregadorDadosCliente requisicao) {
 

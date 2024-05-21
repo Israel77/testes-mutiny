@@ -2,23 +2,22 @@ package org.example.rest;
 
 import org.example.rest.dto.RequisicaoAgregadorDadosCliente;
 import org.example.rest.dto.RespostaAgregadorDadosCliente;
-import org.example.service.sync.DadosClienteSincronoService;
+import org.example.service.async.DadosClienteAssincronoService;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
 @ApplicationScoped
-@Path("/dados-clientes-sincrono")
-public class DadosClienteSincrono {
+@Path("/dados-clientes-assincrono")
+public class DadosClienteAssincrono {
 
     @Inject
-    @RequestScoped
-    DadosClienteSincronoService dadosClienteService;
+    DadosClienteAssincronoService dadosClienteService;
 
     @POST
-    public RespostaAgregadorDadosCliente obterDadosCliente(
+    public Uni<RespostaAgregadorDadosCliente> obterDadosCliente(
             RequisicaoAgregadorDadosCliente requisicao) {
         return dadosClienteService.obterDadosCliente(requisicao);
     }
