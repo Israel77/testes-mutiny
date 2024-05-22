@@ -16,12 +16,14 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
 @RequestScoped
-public class ObterUltimasTransacoesService {
+public class ObterUltimasTransacoesService implements
+        ConsumidorOperacao<RequisicaoAgregadorDadosCliente, RespostaAgregadorDadosCliente, DadosRespostaObterUltimasTransacoes> {
 
     @Inject
     @RestClient
     ConsumidorCurio consumidorCurio;
 
+    @Override
     public Uni<DadosRespostaObterUltimasTransacoes> tratarRequisicao(
             RequisicaoAgregadorDadosCliente requisicao) {
 
@@ -44,6 +46,7 @@ public class ObterUltimasTransacoesService {
                 });
     }
 
+    @Override
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
             DadosRespostaObterUltimasTransacoes dadosUltimasTransacoes) {
         if (dadosUltimasTransacoes == null)

@@ -18,12 +18,15 @@ import jakarta.inject.Inject;
 import static org.example.util.Utilidades.obterGeneroPorCodigo;
 
 @RequestScoped
-public class ObterDadosClienteService {
+public class ObterDadosClienteService
+        implements
+        ConsumidorOperacao<RequisicaoAgregadorDadosCliente, RespostaAgregadorDadosCliente, DadosRespostaObterDadosCliente> {
 
     @Inject
     @RestClient
     ConsumidorCurio consumidorCurio;
 
+    @Override
     public Uni<DadosRespostaObterDadosCliente> tratarRequisicao(RequisicaoAgregadorDadosCliente requisicao) {
 
         var requisicaoDadosCliente = new DadosRequisicaoObterDadosCliente();
@@ -45,6 +48,7 @@ public class ObterDadosClienteService {
                 });
     }
 
+    @Override
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
             DadosRespostaObterDadosCliente dadosCliente) {
 
