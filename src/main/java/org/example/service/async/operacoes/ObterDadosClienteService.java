@@ -38,22 +38,19 @@ public class ObterDadosClienteService
                 .ifNoItem().after(Duration.ofSeconds(5))
                 .recoverWithItem(() -> {
                     Log.error("Timeout na operação: op123451");
-                    return null;
+                    return new DadosRespostaObterDadosCliente();
                 })
                 // Tratar exceção lançada pelo Curio
                 .onFailure(CurioConsumoException.class)
                 .recoverWithItem(e -> {
                     Log.error("Erro ao obter dados do cliente: " + requisicao.codigoCliente());
-                    return null;
+                    return new DadosRespostaObterDadosCliente();
                 });
     }
 
     @Override
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
             DadosRespostaObterDadosCliente dadosCliente) {
-
-        if (dadosCliente == null)
-            return;
 
         resposta.setTextoNomeCliente(dadosCliente.getTextoNomeCliente());
         resposta.setDataNascimentoCliente(dadosCliente.getDataNascimentoCliente());

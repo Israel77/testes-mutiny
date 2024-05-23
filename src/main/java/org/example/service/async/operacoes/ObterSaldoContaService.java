@@ -35,21 +35,19 @@ public class ObterSaldoContaService
                 .ifNoItem().after(Duration.ofSeconds(5))
                 .recoverWithItem(() -> {
                     Log.error("Timeout na operação: op123452");
-                    return null;
+                    return new DadosRespostaObterSaldoContaCorrente();
                 })
                 // Tratar exceção lançada pelo Curio
                 .onFailure(CurioConsumoException.class)
                 .recoverWithItem(e -> {
                     Log.error("Erro ao obter dados do cliente: " + requisicao.codigoCliente());
-                    return null;
+                    return new DadosRespostaObterSaldoContaCorrente();
                 });
     }
 
     @Override
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
             DadosRespostaObterSaldoContaCorrente dadosSaldoConta) {
-        if (dadosSaldoConta == null)
-            return;
 
         resposta.setSaldoAtualContaCorrente(dadosSaldoConta.getSaldoAtualContaCorrente());
     }

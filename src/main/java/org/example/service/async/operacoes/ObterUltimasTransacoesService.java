@@ -36,21 +36,19 @@ public class ObterUltimasTransacoesService implements
                 .ifNoItem().after(Duration.ofSeconds(5))
                 .recoverWithItem(() -> {
                     Log.error("Timeout na operação: op123452");
-                    return null;
+                    return new DadosRespostaObterUltimasTransacoes();
                 })
                 // Tratar exceção lançada pelo Curio
                 .onFailure(CurioConsumoException.class)
                 .recoverWithItem(e -> {
                     Log.error("Erro ao obter dados do cliente: " + requisicao.codigoCliente());
-                    return null;
+                    return new DadosRespostaObterUltimasTransacoes();
                 });
     }
 
     @Override
     public void inserirDados(RespostaAgregadorDadosCliente resposta,
             DadosRespostaObterUltimasTransacoes dadosUltimasTransacoes) {
-        if (dadosUltimasTransacoes == null)
-            return;
 
         resposta.setListaTransacoes(dadosUltimasTransacoes.getListaTransacoes());
     }
